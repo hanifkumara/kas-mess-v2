@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Admin;
 use App\Models\CashPeriod;
 use App\Models\Expense;
 use App\Models\ExpenseBatch;
@@ -13,7 +14,21 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->seedAdmins();
         $this->seedJune2026();
+    }
+
+    private function seedAdmins(): void
+    {
+        Admin::updateOrCreate(
+            ['email' => 'hanif@jelita.com'],
+            ['name' => 'Hanif (Bendahara)', 'password' => 'password', 'role' => 'superadmin'],
+        );
+
+        Admin::updateOrCreate(
+            ['email' => 'henry@jelita.com'],
+            ['name' => 'Henry', 'password' => 'password', 'role' => 'resident'],
+        );
     }
 
     private function seedJune2026(): void

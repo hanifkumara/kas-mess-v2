@@ -48,9 +48,23 @@
                 @endif
             </nav>
 
-            <div class="border-t border-white/10 p-4 text-xs text-navy-400">
-                <p class="text-navy-300 font-medium">{{ config('app.name') }}</p>
-                <p>Laravel {{ app()->version() }} · SQLite</p>
+            <div class="border-t border-white/10 p-4">
+                @auth
+                <div class="mb-3 flex items-center gap-3">
+                    <span class="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-sm font-bold text-white">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                    <div class="min-w-0 leading-tight">
+                        <p class="truncate text-sm font-medium text-white">{{ auth()->user()->name }}</p>
+                        <p class="truncate text-xs capitalize text-navy-400">{{ auth()->user()->role }}</p>
+                    </div>
+                </div>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-navy-300 transition hover:bg-white/5 hover:text-white">
+                        <span>⎋</span> Keluar
+                    </button>
+                </form>
+                @endauth
+                <p class="mt-3 text-xs text-navy-500">{{ config('app.name') }} · Laravel {{ app()->version() }}</p>
             </div>
         </aside>
 

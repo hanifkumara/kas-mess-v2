@@ -1,6 +1,7 @@
 <x-layout :title="'Pengeluaran '. $period->name" :topbarTitle="'Pengeluaran '. $period->name">
     <x-page-header :title="'Pengeluaran — '. $period->name" :subtitle="'Kas awal periode: '. rp($period->starting_balance)">
         <x-slot:actions>
+            <x-button :href="route('periods.expenses.importForm', $period)" variant="secondary" size="sm">📥 Import CSV</x-button>
             <x-button :href="route('periods.expenses.create', $period)">+ Tambah Pengeluaran</x-button>
         </x-slot:actions>
     </x-page-header>
