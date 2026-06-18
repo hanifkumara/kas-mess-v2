@@ -7,14 +7,12 @@ use App\Services\CashReportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ReportController extends Controller
 {
-    public function __construct(private CashReportService $reportService)
-    {
-    }
+    public function __construct(private CashReportService $reportService) {}
 
     public function show(Request $request, CashPeriod $period): View
     {

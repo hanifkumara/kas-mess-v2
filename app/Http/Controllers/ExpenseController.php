@@ -34,7 +34,7 @@ class ExpenseController extends Controller
     {
         return view('expenses.form', [
             'period' => $period,
-            'expense' => new Expense(),
+            'expense' => new Expense,
             'batches' => $period->expenseBatches()->orderBy('sort_order')->get(['id', 'title']),
         ]);
     }

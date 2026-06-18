@@ -24,7 +24,7 @@ class MemberController extends Controller
 
     public function create(): View
     {
-        return view('members.form', ['member' => new Member()]);
+        return view('members.form', ['member' => new Member]);
     }
 
     public function store(MemberRequest $request): RedirectResponse

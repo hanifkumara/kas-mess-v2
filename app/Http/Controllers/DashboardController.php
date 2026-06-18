@@ -8,9 +8,7 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function __construct(private CashReportService $reportService)
-    {
-    }
+    public function __construct(private CashReportService $reportService) {}
 
     public function index(Request $request)
     {

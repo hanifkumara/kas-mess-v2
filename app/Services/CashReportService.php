@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\CashPeriod;
-use App\Models\ExpenseBatch;
 use App\Models\Member;
 use Illuminate\Support\Collection;
 

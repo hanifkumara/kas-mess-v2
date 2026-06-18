@@ -19,7 +19,7 @@ class ExpenseBatchController extends Controller
 
     public function create(CashPeriod $period): View
     {
-        return view('batches.form', ['period' => $period, 'batch' => new ExpenseBatch()]);
+        return view('batches.form', ['period' => $period, 'batch' => new ExpenseBatch]);
     }
 
     public function store(ExpenseBatchRequest $request, CashPeriod $period): RedirectResponse

@@ -55,7 +55,7 @@ if (! function_exists('tgl')) {
      * Format tanggal ke bahasa Indonesia.
      * tgl('2026-06-18') -> "18 Jun 2026"
      */
-    function tgl(\DateTimeInterface|string|null $date, string $format = 'd M Y'): string
+    function tgl(DateTimeInterface|string|null $date, string $format = 'd M Y'): string
     {
         if (blank($date)) {
             return '—';
@@ -63,7 +63,7 @@ if (! function_exists('tgl')) {
 
         try {
             return Carbon::parse($date)->locale('id')->translatedFormat($format);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return '—';
         }
     }

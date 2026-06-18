@@ -18,7 +18,7 @@ class CashPeriodController extends Controller
 
     public function create(): View
     {
-        return view('periods.form', ['period' => new CashPeriod()]);
+        return view('periods.form', ['period' => new CashPeriod]);
     }
 
     public function store(CashPeriodRequest $request): RedirectResponse
