@@ -51,6 +51,9 @@ class WebAuthnController extends Controller
                 return response()->json(['ok' => false, 'error' => 'Credential tidak ditemukan.'], 422);
             }
 
+            $credential->last_login_at = now();
+            $credential->save();
+
             Auth::login($credential->authenticatable, true);
 
             return response()->json(['ok' => true]);
