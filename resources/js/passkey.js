@@ -33,7 +33,7 @@ async function post(url, data) {
     });
     if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body?.message || `Permintaan gagal (HTTP ${res.status})`);
+        throw new Error(body?.error || body?.message || `Permintaan gagal (HTTP ${res.status})`);
     }
     return res.json().catch(() => ({}));
 }

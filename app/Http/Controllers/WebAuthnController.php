@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use Laragear\WebAuthn\Http\Requests\AssertedRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Laragear\WebAuthn\Assertion\Validator\AssertionValidation;
+use Laragear\WebAuthn\Assertion\Validator\AssertionValidator;
 use Laragear\WebAuthn\Http\Requests\AssertionRequest;
 use Laragear\WebAuthn\Http\Requests\AttestationRequest;
 use Laragear\WebAuthn\Http\Requests\AttestedRequest;
+use Laragear\WebAuthn\JsonTransport;
 
 class WebAuthnController extends Controller
 {
@@ -32,11 +37,27 @@ class WebAuthnController extends Controller
         return $request->toVerify();
     }
 
-    /** Verifikasi login passkey (assertion). */
-    public function loginVerify(AssertedRequest $request): JsonResponse
+    /** Verifikasi login passkey (assertion) — tampilkan penyebab gagal. */
+    public function loginVerify(Request $request, AssertionValidator $validator): JsonResponse
     {
-        $user = $request->login(remember: true);
+        try {
+            $validation = $validator
+                ->send(new AssertionValidation(new JsonTransport($request->all())))
+                ->thenReturn();
 
-        return response()->json(['ok' => (bool) $user]);
+            $credential = $validation->credential;
+
+            if (! $credential) {
+                return response()->json(['ok' => false, 'error' => 'Credential tidak ditemukan.'], 422);
+            }
+
+            Auth::login($credential->authenticatable, true);
+
+            return response()->json(['ok' => true]);
+        } catch (\Throwable $e) {
+            Log::error('Passkey login gagal: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+
+            return response()->json(['ok' => false, 'error' => $e->getMessage()], 422);
+        }
     }
 }
