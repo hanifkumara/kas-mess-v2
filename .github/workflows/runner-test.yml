@@ -1,7 +1,0 @@
-name: runner-test
-on: workflow_dispatch
-jobs:
-  hello:
-    runs-on: [self-hosted, kasmess]
-    steps:
-      - run: echo 'Hello from kasmess runner'
