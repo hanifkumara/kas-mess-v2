@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ isset($title) ? $title.' · Kas Mess' : 'Kas Mess' }}</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -35,36 +36,61 @@
             <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4 text-sm">
                 <x-layout.nav-link :route="route('dashboard')" :active="request()->routeIs('dashboard')" icon="▦">Dashboard</x-layout.nav-link>
                 <x-layout.nav-link :route="route('members.index')" :active="request()->routeIs('members.*')" icon="👥">Anggota</x-layout.nav-link>
+                @can('periods.manage')
                 <x-layout.nav-link :route="route('periods.index')" :active="request()->routeIs('periods.*') && !request()->routeIs('periods.payments.*','periods.expenses.*','periods.batches.*','periods.report.*')" icon="🗓️">Periode Kas</x-layout.nav-link>
+                @endcan
 
-                @if ($sharedActivePeriod)
+                @if ($sharedActivePeriod && (auth()->user()?->can('payments.view') || auth()->user()?->can('expenses.view') || auth()->user()?->can('reports.view')))
                 <p class="px-3 pt-5 pb-2 text-[11px] font-semibold uppercase tracking-wider text-navy-400">
                     {{ $sharedActivePeriod->name }}
                 </p>
+                @can('payments.view')
                 <x-layout.nav-link :route="route('periods.payments.index', $sharedActivePeriod)" :active="request()->routeIs('periods.payments.*')" icon="✅">Pembayaran Iuran</x-layout.nav-link>
+                @endcan
+                @can('expenses.view')
                 <x-layout.nav-link :route="route('periods.expenses.index', $sharedActivePeriod)" :active="request()->routeIs('periods.expenses.*')" icon="🧾">Pengeluaran</x-layout.nav-link>
+                @endcan
+                @can('expenses.manage')
                 <x-layout.nav-link :route="route('periods.batches.index', $sharedActivePeriod)" :active="request()->routeIs('periods.batches.*')" icon="📦">Batch Pengeluaran</x-layout.nav-link>
+                @endcan
+                @can('reports.view')
                 <x-layout.nav-link :route="route('periods.report.show', $sharedActivePeriod)" :active="request()->routeIs('periods.report.*')" icon="📊">Laporan Bulanan</x-layout.nav-link>
+                @endcan
                 @endif
             </nav>
 
             <div class="border-t border-white/10 p-4">
                 @auth
+                @php $admin = auth()->user(); @endphp
                 <div class="mb-3 flex items-center gap-3">
-                    <span class="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-sm font-bold text-white">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                    <span class="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-sm font-bold text-white">{{ strtoupper(substr($admin->name, 0, 1)) }}</span>
                     <div class="min-w-0 leading-tight">
-                        <p class="truncate text-sm font-medium text-white">{{ auth()->user()->name }}</p>
-                        <p class="truncate text-xs capitalize text-navy-400">{{ auth()->user()->role }}</p>
+                        <p class="truncate text-sm font-medium text-white">{{ $admin->name }}</p>
+                        <p class="truncate text-xs capitalize text-navy-400">{{ $admin->roles->first()?->name ?? 'anggota' }}</p>
                     </div>
                 </div>
+                <div class="space-y-1 pb-2">
+                    <x-layout.nav-link :route="route('passkeys.index')" :active="request()->routeIs('passkeys.*')" icon="🔑">Passkey Saya</x-layout.nav-link>
+                </div>
+                @if ($admin->can('users.manage') || $admin->can('roles.manage'))
+                <p class="px-3 pt-2 pb-2 text-[11px] font-semibold uppercase tracking-wider text-navy-400">Administrasi</p>
+                <div class="space-y-1">
+                    @can('users.manage')
+                    <x-layout.nav-link :route="route('admins.index')" :active="request()->routeIs('admins.*')" icon="🧑‍💼">Pengguna</x-layout.nav-link>
+                    @endcan
+                    @can('roles.manage')
+                    <x-layout.nav-link :route="route('roles.index')" :active="request()->routeIs('roles.*')" icon="🛡️">Role & Permission</x-layout.nav-link>
+                    @endcan
+                </div>
+                @endif
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-navy-300 transition hover:bg-white/5 hover:text-white">
+                    <button type="submit" class="mt-2 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-navy-300 transition hover:bg-white/5 hover:text-white">
                         <span>⎋</span> Keluar
                     </button>
                 </form>
                 @endauth
-                <p class="mt-3 text-xs text-navy-500">{{ config('app.name') }} · Laravel {{ app()->version() }}</p>
+                <p class="mt-2 text-xs text-navy-500">{{ config('app.name') }} · Laravel {{ app()->version() }}</p>
             </div>
         </aside>
 

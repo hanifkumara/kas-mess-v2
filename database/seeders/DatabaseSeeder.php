@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->seedAdmins();
         $this->seedJune2026();
+        $this->call(PermissionSeeder::class);
     }
 
     private function seedAdmins(): void

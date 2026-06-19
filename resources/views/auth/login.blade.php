@@ -49,10 +49,57 @@
                         Masuk
                     </button>
                 </form>
+
+                <div class="relative my-6 text-center">
+                    <span class="relative z-10 bg-white px-3 text-xs text-slate-400">atau</span>
+                    <div class="absolute inset-x-0 top-1/2 h-px bg-slate-200"></div>
+                </div>
+
+                <div x-data="passkeyLogin()" class="-mt-2">
+                    <p x-show="error" x-text="error" class="mb-3 rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-700"></p>
+                    <button type="button" @click="login()" :disabled="busy"
+                        class="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-navy-800 ring-1 ring-inset ring-slate-300 transition hover:bg-slate-50 disabled:opacity-50">
+                        <span x-show="!busy">🔑 Masuk dengan Passkey</span>
+                        <span x-show="busy">Memverifikasi…</span>
+                    </button>
+                </div>
             </div>
 
             <p class="mt-6 text-center text-xs text-navy-400">Laravel {{ app()->version() }} · Kas Mess</p>
         </div>
     </div>
+
+    <script>
+        function passkeyLogin() {
+            return {
+                busy: false,
+                error: '',
+                routes: {
+                    options: "{{ route('passkey.login.options') }}",
+                    verify: "{{ route('passkey.login') }}",
+                },
+                async login() {
+                    this.error = '';
+                    if (!window.passkey || !window.passkey.supported()) {
+                        this.error = 'Browser ini tidak mendukung passkey.';
+                        return;
+                    }
+                    this.busy = true;
+                    try {
+                        const res = await window.passkey.login(this.routes);
+                        if (res && res.ok) {
+                            window.location.href = "{{ route('dashboard') }}";
+                        } else {
+                            this.error = 'Login passkey gagal.';
+                        }
+                    } catch (e) {
+                        this.error = e.message || 'Login passkey dibatalkan atau gagal.';
+                    } finally {
+                        this.busy = false;
+                    }
+                },
+            };
+        }
+    </script>
 </body>
 </html>
