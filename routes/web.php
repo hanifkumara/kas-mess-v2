@@ -52,5 +52,7 @@ Route::middleware('auth')->group(function () {
         // Laporan
         Route::get('report', [ReportController::class, 'show'])->name('periods.report.show');
         Route::get('report/csv', [ReportController::class, 'exportCsv'])->name('periods.report.csv');
+        Route::get('report/excel', [ReportController::class, 'exportExcel'])->name('periods.report.excel');
+        Route::get('report/pdf', [ReportController::class, 'exportPdf'])->name('periods.report.pdf');
     });
 });

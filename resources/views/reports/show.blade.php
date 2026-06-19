@@ -1,7 +1,9 @@
 <x-layout :title="'Laporan '. $period->name" :topbar-title="'Laporan '. $period->name">
     <x-page-header :title="'Report Kas Mess — '. $period->name" :subtitle="'Laporan pemasukan, pengeluaran, dan saldo berjalan'">
         <x-slot:actions>
-            <x-button :href="route('periods.report.csv', $period)" variant="secondary" size="sm">⬇ Export CSV</x-button>
+            <x-button :href="route('periods.report.csv', $period)" variant="secondary" size="sm">⬇ CSV</x-button>
+            <x-button :href="route('periods.report.excel', $period)" variant="secondary" size="sm">📊 Excel</x-button>
+            <x-button :href="route('periods.report.pdf', $period)" variant="secondary" size="sm">📄 PDF</x-button>
             <x-button as="button" type="button" variant="primary" size="sm" onclick="window.print()">🖨️ Print</x-button>
         </x-slot:actions>
     </x-page-header>

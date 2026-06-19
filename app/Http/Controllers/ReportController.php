@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ReportExcelExport;
 use App\Models\CashPeriod;
 use App\Services\CashReportService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
@@ -71,5 +73,23 @@ class ReportController extends Controller
         };
 
         return Response::stream($callback, 200, $headers);
+    }
+
+    public function exportExcel(CashPeriod $period): StreamedResponse
+    {
+        $report = $this->reportService->build($period);
+
+        return (new ReportExcelExport)->download($period, $report);
+    }
+
+    public function exportPdf(CashPeriod $period)
+    {
+        $report = $this->reportService->build($period);
+        $filename = 'laporan-kas-'.Str::slug($period->name).'.pdf';
+
+        $pdf = Pdf::loadView('reports.pdf', ['report' => $report])
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download($filename);
     }
 }
