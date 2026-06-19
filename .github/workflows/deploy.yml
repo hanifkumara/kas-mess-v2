@@ -12,12 +12,16 @@ concurrency:
 jobs:
   deploy:
     runs-on: [self-hosted, kasmess]
-    timeout-minutes: 15
+    timeout-minutes: 60
     steps:
       - name: Deploy
         run: |
           set -euo pipefail
           cd "$HOME/apps/kas-mess-v2"
+          # serialize deploys across ALL repos on this server (RAM protection)
+          exec 9>/tmp/ci-deploy.lock
+          flock 9
+          echo '==> acquired global deploy lock'
           ./deploy.sh
 
       - name: Notify Discord
